@@ -48,7 +48,7 @@ class ReleasePipelineSteps extends BaseStep {
         script.checkout(
             [
                 $class: 'GitSCM',
-                branches: [[name: "*/${master}"]],
+                branches: [[name: "*/${branch}"]],
                 doGenerateSubmoduleConfigurations: false,
                 extensions: [
                     [$class: 'CleanCheckout'],
@@ -82,7 +82,7 @@ class ReleasePipelineSteps extends BaseStep {
         script.withCredentials(
             [
                 usernamePassword(
-                        credentialsId: 'gitcred',
+                        credentialsId: 'GIT_CRED',
                         passwordVariable: 'ORG_GRADLE_PROJECT_BITBUCKET_PASSWORD',
                         usernameVariable: 'ORG_GRADLE_PROJECT_BITBUCKET_USERNAME'
                 )
