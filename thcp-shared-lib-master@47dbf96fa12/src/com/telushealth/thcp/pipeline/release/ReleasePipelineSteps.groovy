@@ -82,7 +82,7 @@ class ReleasePipelineSteps extends BaseStep {
         script.withCredentials(
             [
                 usernamePassword(
-                        credentialsId: 'naveen184',
+                        credentialsId: 'gitcred',
                         passwordVariable: 'ORG_GRADLE_PROJECT_BITBUCKET_PASSWORD',
                         usernameVariable: 'ORG_GRADLE_PROJECT_BITBUCKET_USERNAME'
                 )
