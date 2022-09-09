@@ -1,0 +1,51 @@
+<powershell>
+# Allow 445 traffuc
+netsh advfirewall firewall add rule name="SMB 445" protocol=TCP dir=in localport=445 action=allow
+
+# Disable Credssp for Jenkins master to login via WinRM.
+winrm set winrm/config/service/auth '@{CredSSP="false"}'
+winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="102400"}'
+winrm set winrm/config/winrs '@{MaxShellsPerUser="20"}'
+winrm set winrm/config/winrs '@{MaxProcessesPerShell="10000"}'
+
+$osString = wmic os get caption | Out-String
+echo "Windows OS: $osString"
+#Setting the EC2Config service for 2012
+if ($osString.Contains("2012")) {
+  $ConfigFile="C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\Config.xml"
+  $xml = [xml](get-content $ConfigFile)
+  $xmlElement = $xml.get_DocumentElement()
+  $xmlElementToModify = $xmlElement.Plugins
+
+  foreach ($element in $xmlElementToModify.Plugin)
+  {
+    if ($element.name -eq "Ec2DynamicBootVolumeSize")
+      {
+        $element.State="Enabled"
+      }
+  }
+  $xml.Save($ConfigFile)
+
+  # Configure how EC2Config prepares the instance for AMI creation.
+  $BundleConfigFile="C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\BundleConfig.xml"
+  $xml = [xml](get-content $BundleConfigFile)
+  $xmlElement = $xml.get_DocumentElement()
+
+  foreach ($element in $xmlElement.Property)
+  {
+      if ($element.Name -eq "AutoSysprep")
+      {
+          $element.Value="Yes"
+      }
+  }
+  $xml.Save($BundleConfigFile)
+  ##Restart-Computer
+} else {
+  $launchConfig = Get-Content -Path "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Config\\LaunchConfig.json" | ConvertFrom-Json
+  $launchConfig.extendBootVolumeSize = $true
+  $launchConfig
+
+  Set-Content -Value ($launchConfig | ConvertTo-Json) -Path "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Config\\LaunchConfig.json"
+  C:\ProgramData\Amazon\EC2-Windows\Launch\Scripts\InitializeDisks.ps1
+}
+</powershell>

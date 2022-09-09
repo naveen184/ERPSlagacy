@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://artifactory.tools.thcoe.ca/artifactory/gradle-releases-local"
+        }
+    }
+    dependencies {
+        classpath 'com.telushealth.thcp.pipeline.gradle:aws-gradle-plugin:0.1.69'
+    }
+}
+
+plugins {
+    id 'groovy'
+    id "jp.classmethod.aws" version "0.37"
+}
+
+apply plugin: "com.telushealth.thcp.pipeline.gradle.aws.rds"
+
+aws {
+    region = 'ca-central-1'
+}
+
+rds {
+    region = 'ca-central-1'
+}

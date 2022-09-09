@@ -1,0 +1,61 @@
+id: "PROJECT_BOOTSTRAP"
+name: "PROJECT BOOTSTRAP"
+dryRun: false
+vpc: "mgmt-1"
+bakingKeyId: "a7f8c7dc-020f-4a1f-9b90-ac49754bd0e5"
+projects:
+  - key: 'pharmacylink'
+    exists: true
+    ignoreTasks:
+     - setBitBucketProject
+     - setThcpSeedJobDsl
+slaves:
+- type: "deploy"
+  amiName: "thcp-aws-linux-jenkins-java-slave-image"
+  amiType: "T2Nano"
+- type: "packer"
+  amiName: "thcp-aws-linux-jenkins-packer-slave-image"
+  amiType: "T2Nano"
+- type: "docker"
+  amiName: "thcp-aws-linux-jenkins-packer-slave-image"
+  amiType: "T2Nano"
+  numExecutors: "4"
+  instanceCapStr: "2"
+  initScript: "sudo docker --version"
+environments:
+- name: "prod"
+  subnet: "subnet-d4a6eabd"
+  servers:
+  - name: "cd"
+    securityGroup: "sg-39f9fd51"
+    projectTypes:
+    - AMI
+    - PIPELINE
+    - RELEASE
+    slaves:
+    - type: "deploy"
+      amiType: "T2Medium"
+    - type: "packer"
+      amiType: "T2Small"
+    - type: "docker"
+      amiType: "T2Small"
+  - name: "ci"
+    securityGroup: "sg-67fffb0f"
+    projectTypes:
+    - INFRASTRUCTURE
+    - PUPPET
+- name: "stage"
+  subnet: "subnet-0ea2ee67"
+  servers:
+  - name: "cd"
+    securityGroup: "sg-f2a5fa9a"
+    projectTypes:
+    - AMI
+    - PIPELINE
+    - RELEASE
+  - name: "ci"
+    securityGroup: "sg-0c5a2ca5139b5ce4a"
+    projectTypes:
+    - INFRASTRUCTURE
+    - PUPPET
+    

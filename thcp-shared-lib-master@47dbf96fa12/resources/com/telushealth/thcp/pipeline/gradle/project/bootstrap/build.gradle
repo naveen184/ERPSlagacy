@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        maven { url = 'https://artifactory.tools.thcoe.ca/artifactory/gradle-jcenter-remote/' }
+        maven { url = 'https://artifactory.tools.thcoe.ca/artifactory/gradle-releases-local/' }
+        maven { url = 'https://artifactory.tools.thcoe.ca/artifactory/gradle-snapshots-local/' }
+    }
+    dependencies {
+        dependencies {
+            classpath 'com.telushealth.thcp.pipeline.gradle:project-bootstrap-gradle-plugin:0.1.47'
+        }
+    }
+}
+
+plugins {
+    id 'groovy'
+    id "jp.classmethod.aws" version "0.35"
+}
+
+apply plugin: "com.telushealth.thcp.pipeline.gradle.project.bootstrap"
+
+//projectbootstrap {
+//    bitbucketUrl = "https://bitbucket.tools.telushealth.com"
+//    cloudOpsGroupName = "chris-cloudarchitecture"
+//}
