@@ -18,7 +18,7 @@ jobs:
 
       - uses: " naveen184/ERPSlagacy"
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          repo_token: "${{ DND }}"
           automatic_release_tag: "latest"
           prerelease: true
           title: "Development Build"
